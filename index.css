@@ -1,0 +1,39 @@
+body{
+    background-color:rgba(157, 49, 172, 0.753);
+    color:aliceblue;
+    font-size:18px;
+}
+div.intro{
+    border-style:groove;
+    border-radius:6px;
+    border-color:gray;
+    background-color:rgb(163, 4, 83);
+    color:white;
+    font-size:13px;
+}
+.fuge{
+    animation: color-change 3s linear infinite;
+}
+@keyframes color-change{
+    0%   { color: #ff0000; }
+    17%  { color: #ff7f00; }
+    33%  { color: #ffff00; }
+    50%  { color: #00ff00; }
+    67%  { color: #0000ff; }
+    83%  { color: #9400d3; }
+    100% { color: #ff0000; }
+}
+.advancement{
+    font-size:16px;
+    color:pink;
+}
+.blogpost{
+    width:650px;
+    font-size:22px;
+    color:aqua;
+    border-style:double;
+    border-radius:32px;
+    border-width:16px;
+    border-color:#0099ff;
+    background-color:#efd1f3;
+}
