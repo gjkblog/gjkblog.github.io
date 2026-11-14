@@ -4,7 +4,8 @@
         <meta charset="utf-8">
         <title>blog</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="view/index.css">
+        <!-- 使用 ./ 明确表示当前目录 -->
+        <link rel="stylesheet" href="./view/index.css">
     </head>
     <body>
         <canvas id="space-canvas"></canvas>
@@ -43,11 +44,13 @@
             <div class="panel panel-2">
                 <div class="blog-section">
                     <h3>博客一览</h3>
+                    <!-- 请根据你的实际目录修改链接，如果第一篇是第1个文件夹 -->
                     <div class="blogpost">
-                        <a href="blog/deeplearning1/viewer.html?file=deeplearning1.md">深度学习 第一篇：理论了解，三大学习原理</a>
+                        <a href="./blog/deeplearning1/viewer.html?file=deeplearning1.md">深度学习 第一篇：理论了解，三大学习原理</a>
                     </div>
+                    <!-- 第二篇的路径 -->
                     <div class="blogpost">
-                        <a href="blog/deeplearning2/viewer.html?file=deeplearning2.md">深度学习 第二篇：从感知机到神经网络，摸到了反向传播的门口</a>
+                        <a href="./blog/deeplearning2/viewer.html?file=deeplearning2.md">深度学习 第二篇：从感知机到神经网络，摸到了反向传播的门口</a>
                     </div>
                 </div>
             </div>
@@ -62,150 +65,147 @@
                 </div>
             </div>
         </main>
-        <script src="view/star.js"></script>
-        <script src="view/space.js"></script>
+        <script src="./view/star.js"></script>
+        <script src="./view/space.js"></script>
        <script>
-    (function(){
-        var panels=document.querySelectorAll('.panel');
-        var btns=document.querySelectorAll('.nav-btn');
-        var canvas=document.getElementById('space-canvas');
-        var toggle=document.getElementById('effectToggle');
-        var toggleText=toggle.querySelector('span');
-        var effectsOn=true;
+            (function(){
+                var panels=document.querySelectorAll('.panel');
+                var btns=document.querySelectorAll('.nav-btn');
+                var canvas=document.getElementById('space-canvas');
+                var toggle=document.getElementById('effectToggle');
+                var toggleText=toggle.querySelector('span');
+                var effectsOn=true;
 
-        var currentProgress=0;
-        var targetProgress=0;
-        var panelCount=panels.length;
-        var isAnimating=false;
+                var currentProgress=0;
+                var targetProgress=0;
+                var panelCount=panels.length;
+                var isAnimating=false;
 
-        function applyRender(){
-            if(effectsOn){
-                // 特效开启：3D 斜轴翻转
-                panels.forEach(function(panel, i){
-                    var diff = i - currentProgress;
-                    var angle = diff * 90;
-                    var opacity = Math.max(0, 1 - Math.abs(diff));
-                    var pointerEvents = Math.abs(diff) < 0.1 ? 'auto' : 'none';
-                    var zIndex = Math.abs(diff) < 0.1 ? 10 : 1;
+                function applyRender(){
+                    if(effectsOn){
+                        panels.forEach(function(panel, i){
+                            var diff = i - currentProgress;
+                            var angle = diff * 90;
+                            var opacity = Math.max(0, 1 - Math.abs(diff));
+                            var pointerEvents = Math.abs(diff) < 0.1 ? 'auto' : 'none';
+                            var zIndex = Math.abs(diff) < 0.1 ? 10 : 1;
 
-                    panel.style.transition = '';
-                    panel.style.transform = 'rotate3d(1, 1, 0, ' + angle + 'deg)';
-                    panel.style.opacity = opacity;
-                    panel.style.pointerEvents = pointerEvents;
-                    panel.style.zIndex = zIndex;
+                            panel.style.transition = '';
+                            panel.style.transform = 'rotate3d(1, 1, 0, ' + angle + 'deg)';
+                            panel.style.opacity = opacity;
+                            panel.style.pointerEvents = pointerEvents;
+                            panel.style.zIndex = zIndex;
+                        });
+                    }else{
+                        var idx = Math.round(currentProgress);
+                        panels.forEach(function(panel, i){
+                            panel.style.transition = 'none';
+                            panel.style.transform = 'none';
+                            panel.style.opacity = (i === idx) ? '1' : '0';
+                            panel.style.pointerEvents = (i === idx) ? 'auto' : 'none';
+                            panel.style.zIndex = (i === idx) ? 10 : 1;
+                        });
+                    }
+
+                    var activeIdx = Math.round(currentProgress);
+                    btns.forEach(function(btn, i){
+                        if(i === activeIdx) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    });
+                }
+
+                function animateProgress(){
+                    var diff = targetProgress - currentProgress;
+                    if(Math.abs(diff) < 0.001){
+                        currentProgress = targetProgress;
+                        applyRender();
+                        isAnimating = false;
+                    }else{
+                        currentProgress += diff * 0.12;
+                        applyRender();
+                        requestAnimationFrame(animateProgress);
+                    }
+                }
+
+                function setTarget(p){
+                    p = Math.max(0, Math.min(panelCount-1, p));
+                    targetProgress = p;
+                    if(!effectsOn){
+                        currentProgress = targetProgress;
+                        isAnimating = false;
+                        applyRender();
+                        return;
+                    }
+                    if(!isAnimating){
+                        isAnimating = true;
+                        requestAnimationFrame(animateProgress);
+                    }
+                }
+
+                window.addEventListener('wheel', function(e){
+                    e.preventDefault();
+                    var delta = e.deltaY * 0.0015;
+                    setTarget(targetProgress + delta);
+                }, {passive: false});
+
+                btns.forEach(function(btn){
+                    btn.addEventListener('click', function(){
+                        setTarget(parseInt(this.getAttribute('data-index')));
+                    });
                 });
-            }else{
-                // 特效关闭：无动画，平板直显当前页
-                var idx = Math.round(currentProgress);
-                panels.forEach(function(panel, i){
-                    panel.style.transition = 'none';
-                    panel.style.transform = 'none';
-                    panel.style.opacity = (i === idx) ? '1' : '0';
-                    panel.style.pointerEvents = (i === idx) ? 'auto' : 'none';
-                    panel.style.zIndex = (i === idx) ? 10 : 1;
+
+                document.addEventListener('mousemove', function(e){
+                    if(!effectsOn) return;
+                    var x = (e.clientX/window.innerWidth-0.5)*2;
+                    var y = (e.clientY/window.innerHeight-0.5)*2;
+                    if(canvas){
+                        canvas.style.transform='translateX('+(x*20)+'px) translateY('+(y*20)+'px) scale(1.03)';
+                    }
+                }, {passive:true});
+                document.addEventListener('mouseleave', function(){
+                    if(canvas) canvas.style.transform='translateX(0px) translateY(0px) scale(1)';
                 });
-            }
 
-            var activeIdx = Math.round(currentProgress);
-            btns.forEach(function(btn, i){
-                if(i === activeIdx) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-        }
+                var title=document.getElementById('title');
+                var colors=['#ff0000','#ff7f00','#ffff00','#00ff00','#0000ff','#4b0082','#9400d3'];
+                var currentColorIndex=0;
+                title.style.setProperty('--title-color',colors[currentColorIndex]);
+                function flashTitle(newColor){
+                    if(!effectsOn)return;
+                    title.style.setProperty('--title-color',newColor);
+                    title.classList.remove('title-burst');
+                    void title.offsetWidth;
+                    title.classList.add('title-burst');
+                    setTimeout(function(){title.classList.remove('title-burst');},1500);
+                }
+                title.addEventListener('click',function(){
+                    currentColorIndex=(currentColorIndex+1)%colors.length;
+                    flashTitle(colors[currentColorIndex]);
+                });
+                window.addEventListener('nebula-burst',function(){
+                    currentColorIndex=Math.floor(Math.random()*colors.length);
+                    flashTitle(colors[currentColorIndex]);
+                });
 
-        function animateProgress(){
-            var diff = targetProgress - currentProgress;
-            if(Math.abs(diff) < 0.001){
-                currentProgress = targetProgress;
+                toggle.addEventListener('click',function(){
+                    effectsOn=!effectsOn;
+                    if(effectsOn){
+                        document.body.classList.remove('effects-off');
+                        toggle.classList.add('active');
+                        toggleText.textContent='特殊效果: ON';
+                        if(canvas){canvas.style.transform='translateX(0px) translateY(0px) scale(1)';}
+                        applyRender();
+                    }else{
+                        document.body.classList.add('effects-off');
+                        toggle.classList.remove('active');
+                        toggleText.textContent='特殊效果: OFF';
+                        if(canvas){canvas.style.transform='none';}
+                        applyRender();
+                    }
+                });
+
                 applyRender();
-                isAnimating = false;
-            }else{
-                currentProgress += diff * 0.12;
-                applyRender();
-                requestAnimationFrame(animateProgress);
-            }
-        }
-
-        function setTarget(p){
-            p = Math.max(0, Math.min(panelCount-1, p));
-            targetProgress = p;
-            if(!effectsOn){
-                // 特效关闭：直接跳到目标，无动画
-                currentProgress = targetProgress;
-                isAnimating = false;
-                applyRender();
-                return;
-            }
-            if(!isAnimating){
-                isAnimating = true;
-                requestAnimationFrame(animateProgress);
-            }
-        }
-
-        window.addEventListener('wheel', function(e){
-            e.preventDefault();
-            var delta = e.deltaY * 0.0015;
-            setTarget(targetProgress + delta);
-        }, {passive: false});
-
-        btns.forEach(function(btn){
-            btn.addEventListener('click', function(){
-                setTarget(parseInt(this.getAttribute('data-index')));
-            });
-        });
-
-        document.addEventListener('mousemove', function(e){
-            if(!effectsOn) return;
-            var x = (e.clientX/window.innerWidth-0.5)*2;
-            var y = (e.clientY/window.innerHeight-0.5)*2;
-            if(canvas){
-                canvas.style.transform='translateX('+(x*20)+'px) translateY('+(y*20)+'px) scale(1.03)';
-            }
-        }, {passive:true});
-        document.addEventListener('mouseleave', function(){
-            if(canvas) canvas.style.transform='translateX(0px) translateY(0px) scale(1)';
-        });
-
-        var title=document.getElementById('title');
-        var colors=['#ff0000','#ff7f00','#ffff00','#00ff00','#0000ff','#4b0082','#9400d3'];
-        var currentColorIndex=0;
-        title.style.setProperty('--title-color',colors[currentColorIndex]);
-        function flashTitle(newColor){
-            if(!effectsOn)return;
-            title.style.setProperty('--title-color',newColor);
-            title.classList.remove('title-burst');
-            void title.offsetWidth;
-            title.classList.add('title-burst');
-            setTimeout(function(){title.classList.remove('title-burst');},1500);
-        }
-        title.addEventListener('click',function(){
-            currentColorIndex=(currentColorIndex+1)%colors.length;
-            flashTitle(colors[currentColorIndex]);
-        });
-        window.addEventListener('nebula-burst',function(){
-            currentColorIndex=Math.floor(Math.random()*colors.length);
-            flashTitle(colors[currentColorIndex]);
-        });
-
-        toggle.addEventListener('click',function(){
-            effectsOn=!effectsOn;
-            if(effectsOn){
-                document.body.classList.remove('effects-off');
-                toggle.classList.add('active');
-                toggleText.textContent='特殊效果: ON';
-                if(canvas){canvas.style.transform='translateX(0px) translateY(0px) scale(1)';}
-                applyRender();
-            }else{
-                document.body.classList.add('effects-off');
-                toggle.classList.remove('active');
-                toggleText.textContent='特殊效果: OFF';
-                if(canvas){canvas.style.transform='none';}
-                applyRender();
-            }
-        });
-
-        applyRender();
-    })();
-</script>
+            })();
+        </script>
     </body>
 </html>

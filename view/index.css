@@ -213,3 +213,61 @@ body{
     0%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg);}
     100%{opacity:0;transform:translate(-50%,-50%) scale(0.2) rotate(180deg) translateY(30px);}
 }
+/* 修复左上角特殊效果按钮显示 */
+.effect-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    
+    /* 核心修复：给一个纯深色背景兜底，防止 backdrop-filter 失效导致看不清 */
+    background: rgba(10, 15, 30, 0.85); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    /* 边框和文字颜色 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    
+    /* 保证它在最上层 */
+    z-index: 9999;
+    
+    /* 防止手机端或窄屏被挤压 */
+    white-space: nowrap;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+/* 悬浮时的发光效果 */
+.effect-toggle:hover {
+    background: rgba(20, 25, 50, 0.9);
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+/* 那个发光的小圆点 */
+.toggle-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #666; /* 默认灰色 */
+    transition: all 0.3s ease;
+}
+
+/* 按钮打开时的状态 */
+.effect-toggle.active {
+    border-color: #ff00aa;
+    box-shadow: 0 0 15px rgba(255, 0, 170, 0.3);
+}
+
+.effect-toggle.active .toggle-dot {
+    background: #ff00aa;
+    box-shadow: 0 0 10px #ff00aa, 0 0 20px #ff00aa; /* 粉色光晕 */
+}
