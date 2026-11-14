@@ -3,21 +3,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>深度学习 第一篇：理论了解，三大学习原理</title>
+    <title>深度学习 第二篇：从感知机到神经网络，摸到了反向传播的门口</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <link rel="stylesheet" href="viewer.css">
 </head>
 <body>
-    <canvas id="neural-canvas"></canvas>
+    <!-- 这里是神经网络背景的画布，绝对不能有 space-canvas -->
+    <canvas id="synapse-canvas"></canvas>
+    
     <div class="reader-container">
         <a href="../../index.html" id="back">← 返回首页</a>
         <div id="content">加载中…</div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        var file=new URLSearchParams(location.search).get('file')||'deeplearning1.md';
+        var file=new URLSearchParams(location.search).get('file')||'deeplearning2.md';
         fetch(file)
             .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
             .then(function(md){
@@ -32,6 +35,8 @@
             })
             .catch(function(e){document.getElementById('content').textContent='加载失败: '+e;});
     </script>
-    <script src="neural.js"></script>
+    
+    <!-- 只能加载 synapse.js！ -->
+    <script src="synapse.js"></script>
 </body>
 </html>
