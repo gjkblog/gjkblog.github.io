@@ -11,7 +11,11 @@
     var rotation=0;
     var nebulaRotationSpeed=0;
     var globalTimer=0;
-    var CYCLE_DURATION=12;
+    var CYCLE_DURATION=18;
+    var panX=0;
+    var panY=0;
+    var targetPanX=0;
+    var targetPanY=0;
     function resize(){
         w=canvas.width=window.innerWidth;
         h=canvas.height=window.innerHeight;
@@ -20,11 +24,19 @@
     }
     window.addEventListener('resize',resize);
     resize();
+    function randomNebulaScale(){
+        return 0.8+Math.random()*0.4;
+    }
+    function resetNebulaSize(){
+        for(var i=0;i<nebulaParticles.length;i++){
+            nebulaParticles[i].radius=nebulaParticles[i].baseRadius*randomNebulaScale();
+        }
+    }
     function Star(){
         this.x=Math.random()*w;
         this.y=Math.random()*h;
         this.z=Math.random()*2+0.2;
-        this.radius=Math.random()*2.5+0.3;
+        this.radius=Math.random()*1.2+0.3;
         this.alpha=Math.random();
         this.alphaSpeed=(Math.random()*0.04)+0.01;
         this.vx=(Math.random()-0.5)*2;
@@ -60,16 +72,19 @@
         ctx.globalAlpha=1;
     };
     function NebulaParticle(){
-        this.radius=Math.random()*300+50;
+        this.baseRadius=Math.random()*300+50;
+        this.radius=this.baseRadius*randomNebulaScale();
         this.angle=Math.random()*Math.PI*2;
         this.speed=(Math.random()*0.002)+0.0005;
-        this.size=Math.random()*3+0.5;
-        this.alpha=Math.random()*0.5+0.1;
+        this.size=Math.random()*2.2+0.8;
+        this.baseAlpha=Math.random()*0.5+0.1;
+        this.alpha=this.baseAlpha;
         this.offset=Math.random()*Math.PI*2;
         this.color=Math.random()>0.5?'#ff00aa':'#00ffff';
+        this.direction=Math.random()>0.5?1:-1;
     }
     NebulaParticle.prototype.update=function(){
-        this.angle+=this.speed+nebulaRotationSpeed;
+        this.angle+=(this.speed+nebulaRotationSpeed)*this.direction;
     };
     NebulaParticle.prototype.draw=function(){
         var wobble=Math.sin(this.angle*3+this.offset)*20;
@@ -93,7 +108,7 @@
         this.angle=angle;
         this.radius=radius;
         this.speed=Math.random()*0.02+0.01;
-        this.size=Math.random()*4+1;
+        this.size=Math.random()*2.5+0.5;
         this.alpha=1;
         this.life=0;
         this.maxLife=Math.random()*3+2;
@@ -127,52 +142,53 @@
     for(var i=0;i<NUM_NEBULA;i++){
         nebulaParticles.push(new NebulaParticle());
     }
+    resetNebulaSize();
     var mouseX=0;
     var mouseY=0;
-    var targetRotateX=0;
-    var targetRotateY=0;
-    var currentRotateX=0;
-    var currentRotateY=0;
     document.addEventListener('mousemove',function(e){
         mouseX=e.clientX;
         mouseY=e.clientY;
-        targetRotateY=(mouseX/w-0.5)*0.5;
-        targetRotateX=-(mouseY/h-0.5)*0.5;
+        targetPanX=(mouseX/w-0.5)*-40;
+        targetPanY=(mouseY/h-0.5)*-40;
     });
+    var burstDispatched=false;
     function animate(){
         ctx.clearRect(0,0,w,h);
-        currentRotateX+=(targetRotateX-currentRotateX)*0.05;
-        currentRotateY+=(targetRotateY-currentRotateY)*0.05;
+        panX+=(targetPanX-panX)*0.05;
+        panY+=(targetPanY-panY)*0.05;
         globalTimer+=1/60;
         if(globalTimer>=CYCLE_DURATION){
             globalTimer=0;
+            burstDispatched=false;
+            resetNebulaSize();
         }
         var isBursting=false;
-        if(globalTimer>=4&&globalTimer<8){
+        if(globalTimer>=6&&globalTimer<12){
             isBursting=true;
             nebulaRotationSpeed=0.03;
-        }else if(globalTimer>=8&&globalTimer<12){
+            if(!burstDispatched){
+                burstDispatched=true;
+                window.dispatchEvent(new Event('nebula-burst'));
+            }
+        }else if(globalTimer>=12&&globalTimer<16){
             nebulaRotationSpeed=Math.max(0,nebulaRotationSpeed-0.001);
         }else{
             nebulaRotationSpeed=0;
         }
         ctx.save();
-        ctx.translate(cx,cy);
-        ctx.rotate(currentRotateY);
-        ctx.scale(1+currentRotateX*0.1,1+currentRotateX*0.1);
-        ctx.translate(-cx,-cy);
-        for(var i=0;i<stars.length;i++){
-            stars[i].update();
-            stars[i].draw();
-        }
-        rotation+=nebulaRotationSpeed;
-        ctx.save();
-        ctx.translate(cx,cy);
+        ctx.translate(cx+panX,cy+panY);
         ctx.rotate(rotation);
         ctx.translate(-cx,-cy);
         for(var i=0;i<nebulaParticles.length;i++){
             nebulaParticles[i].update();
             nebulaParticles[i].draw();
+        }
+        ctx.restore();
+        ctx.save();
+        ctx.translate(panX*0.5,panY*0.5);
+        for(var i=0;i<stars.length;i++){
+            stars[i].update();
+            stars[i].draw();
         }
         ctx.restore();
         if(isBursting){
@@ -182,6 +198,8 @@
                 smallStars.push(new SmallStar());
             }
         }
+        ctx.save();
+        ctx.translate(panX*0.8,panY*0.8);
         for(var i=smallStars.length-1;i>=0;i--){
             smallStars[i].update();
             smallStars[i].draw();
