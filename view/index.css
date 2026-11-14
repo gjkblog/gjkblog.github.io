@@ -271,3 +271,53 @@ body{
     background: #ff00aa;
     box-shadow: 0 0 10px #ff00aa, 0 0 20px #ff00aa; /* 粉色光晕 */
 }
+/* 手机端单独适配 */
+@media (max-width: 768px) {
+    body {
+        font-size: 18px;
+    }
+    .scene-container {
+        width: 92vw;
+        height: 70vh;
+        perspective: 1000px;
+    }
+    .effect-toggle {
+        top: 15px;
+        left: 15px;
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+    .side-nav {
+        right: 10px;
+    }
+    .nav-base {
+        padding: 12px;
+        gap: 10px;
+    }
+    .nav-btn {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+    .fuge {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+    }
+    .intro-content, .advancement-card, .blog-section, .links-section {
+        padding: 20px;
+    }
+    .intro-content h2, .advancement-card h3, .blog-section h3, .links-section h3 {
+        font-size: 18px;
+    }
+    .intro-content p {
+        font-size: 14px;
+    }
+    .advancement-card ul, .link-list a {
+        font-size: 14px;
+    }
+    .blogpost a {
+        padding: 12px 15px;
+        font-size: 15px;
+        white-space: normal;
+        word-break: break-word;
+    }
+}

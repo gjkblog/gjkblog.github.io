@@ -4,7 +4,6 @@
         <meta charset="utf-8">
         <title>blog</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- 使用 ./ 明确表示当前目录 -->
         <link rel="stylesheet" href="./view/index.css">
     </head>
     <body>
@@ -44,11 +43,9 @@
             <div class="panel panel-2">
                 <div class="blog-section">
                     <h3>博客一览</h3>
-                    <!-- 请根据你的实际目录修改链接，如果第一篇是第1个文件夹 -->
                     <div class="blogpost">
                         <a href="./blog/deeplearning1/viewer.html?file=deeplearning1.md">深度学习 第一篇：理论了解，三大学习原理</a>
                     </div>
-                    <!-- 第二篇的路径 -->
                     <div class="blogpost">
                         <a href="./blog/deeplearning2/viewer.html?file=deeplearning2.md">深度学习 第二篇：从感知机到神经网络，摸到了反向传播的门口</a>
                     </div>
@@ -67,7 +64,7 @@
         </main>
         <script src="./view/star.js"></script>
         <script src="./view/space.js"></script>
-       <script>
+        <script>
             (function(){
                 var panels=document.querySelectorAll('.panel');
                 var btns=document.querySelectorAll('.nav-btn');
