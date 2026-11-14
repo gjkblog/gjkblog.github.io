@@ -1,30 +1,63 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="urf-8">
+        <meta charset="utf-8">
         <title>blog</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="index.css">
     </head>
     <body>
-        <h1 class="fuge">公俊凯博客站</h1>
-        <div class="intro">
-            <h1>About Me</h1>
-            <p>中国海洋大学的一位26级学生，对计算机、人工智能等科技领域研究颇感兴趣</p>
-            <p>由于高中从事过信息学竞赛，因此我清楚，计算机入门是多么困难。故我将在我的博客发布一些我个人的学习博客，供大家后期入门</p>
-            <br>
-            <div class="advancement">
-                <h3>个人成果(计科领域)</h3>
-                <p>CSP-J2023 山东省二等奖</p>
-                <p>CSP-S2024 山东省一等奖</p>
-                <p>(仍等待填充中)</p>
+        <main class="main-container">
+            <h1 class="fuge">公俊凯博客站</h1>
+            <div class="intro">
+                <h1>About Me</h1>
+                <p>中国海洋大学的一位26级学生，对计算机、人工智能等科技领域研究颇感兴趣</p>
+                <p>由于高中从事过信息学竞赛，因此我清楚，计算机入门是多么困难。故我将在我的博客发布一些我个人的学习博客，供大家后期入门</p>
+                <br>
+                <div class="advancement">
+                    <h3>个人成果(计科领域)</h3>
+                    <p>CSP-J2023 山东省二等奖</p>
+                    <p>CSP-S2024 山东省一等奖</p>
+                    <p>(仍等待填充中)</p>
+                </div>
             </div>
-        </div>
-        <div>
-            <h3>博客一览</h3>
-            <div class="blogpost">
-                <a href="viewer.html?file=week1.md">深度学习 第一篇：理论了解，三大学习原理</a>
+            <div class="blog-section">
+                <h3>博客一览</h3>
+                <div class="blogpost">
+                    <a href="viewer.html?file=week1.md">深度学习 第一篇：理论了解，三大学习原理</a>
+                </div>
             </div>
-        </div>
+        </main>
+
+        <!-- 鼠标拖尾四角星脚本 -->
+        <script>
+            document.addEventListener('mousemove', function(e) {
+                // 限制一下生成频率，不然太密集会卡
+                if (Math.random() > 0.4) return; 
+                
+                var star = document.createElement('div');
+                star.className = 'star-particle';
+                star.style.left = e.clientX + 'px';
+                star.style.top = e.clientY + 'px';
+                
+                // 随机分配粉蓝黄三种颜色
+                var colors = ['#ff00aa', '#00ffff', '#ffcc00'];
+                var color = colors[Math.floor(Math.random() * colors.length)];
+                star.style.background = color;
+                star.style.boxShadow = '0 0 10px ' + color;
+                
+                // 随机大小
+                var size = Math.random() * 8 + 8;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+
+                document.body.appendChild(star);
+                
+                // 动画结束后移除节点，防止页面卡顿
+                setTimeout(function() {
+                    star.remove();
+                }, 800);
+            });
+        </script>
     </body>
 </html>
