@@ -33,5 +33,14 @@
             .catch(function(e){document.getElementById('content').textContent='加载失败: '+e;});
     </script>
     <script src="synapse.js"></script>
+    <script>
+        /* 内嵌在首页 iframe 时，返回首页改为通知父页面关闭覆盖层 */
+        document.getElementById('back').addEventListener('click', function(e){
+            if(window.self !== window.top){
+                e.preventDefault();
+                window.parent.postMessage({type:'blogClose'}, '*');
+            }
+        });
+    </script>
 </body>
 </html>
