@@ -1,0 +1,327 @@
+/* =====================================================
+   ACM 算法笔记 · IDE 夜风格
+   不再走玻璃磨砂，改用代码编辑器（VSCode Dark+）的外观语言
+   ===================================================== */
+:root{
+    --bg:    #0a0e14;
+    --ed:    #0d1117;
+    --ed-2:  #161b22;
+    --ed-3:  #0b0f16;
+    --line:  #2a2f3a;
+    --green: #7ee787;
+    --blue:  #58a6ff;
+    --orange:#ffab70;
+    --purple:#bc8cff;
+    --pink:  #f778ba;
+    --text:  #d6deeb;
+    --muted: #8b949e;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+    margin:0;
+    padding:40px 20px 120px;
+    min-height:100vh;
+    font-family:"Consolas","JetBrains Mono","Cascadia Code","Source Han Sans SC","Microsoft YaHei",monospace;
+    background-color:var(--bg);
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-x:hidden;
+}
+::selection{background:rgba(126,231,135,0.35);color:#fff;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#3d4454;}
+
+/* ================= 圆柱内壁代码背景 ================= */
+.cyliner-bg{
+    position:fixed;
+    top:0;left:0;width:100%;height:100%;
+    perspective:1000px;
+    perspective-origin:50% 50%;
+    z-index:-1;
+    overflow:hidden;
+    pointer-events:none;
+}
+/* 圆柱中心的一层辉光，替代逐列发光（省性能又增艳） */
+.cyliner-bg::before{
+    content:'';
+    position:absolute;
+    left:50%;top:50%;
+    width:66vmin;height:66vmin;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(126,231,135,0.12),transparent 65%);
+    border-radius:50%;
+}
+.cyliner{
+    position:absolute;
+    left:50%;top:50%;
+    width:0;height:0;
+    transform-style:preserve-3d;
+    animation:cylspin 55s linear infinite;
+}
+.cyl-col{
+    position:absolute;
+    left:-22px;top:-70vh;
+    width:44px;height:140vh;
+    padding:0 6px;
+    overflow:hidden;
+    font:700 11px/17px Consolas,"JetBrains Mono",monospace;
+    white-space:pre;
+    letter-spacing:1px;
+    color:rgba(126,231,135,0.78);
+    transform-origin:center;
+}
+@keyframes cylspin{
+    from{transform:rotateY(0deg);}
+    to  {transform:rotateY(360deg);}
+}
+
+/* ================= 编辑器窗口 ================= */
+.reader-container{
+    position:relative;
+    width:min(1080px, 92vw);
+    margin:0 20px;
+    background:var(--ed);
+    border:2px solid rgba(126,231,135,0.6);
+    border-radius:10px;
+    box-shadow:
+        0 0 0 1px rgba(88,166,255,0.18),
+        0 0 42px rgba(126,231,135,0.18),
+        0 24px 60px rgba(0,0,0,0.65);
+    overflow:hidden;
+    animation:editor-enter 0.5s ease-out;
+}
+@keyframes editor-enter{
+    from{opacity:0;transform:translateY(18px);}
+    to  {opacity:1;transform:translateY(0);}
+}
+.editor-bar{
+    position:relative;
+    height:42px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 16px;
+    background:var(--ed-2);
+    border-bottom:2px solid rgba(126,231,135,0.35);
+}
+.dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.dot-red{background:#ff5f56;}
+.dot-yellow{background:#ffbd2e;}
+.dot-green{background:#27c93f;}
+.file-name{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:13px;
+    color:#9dd8ff;
+    letter-spacing:1px;
+    text-shadow:0 0 8px rgba(88,166,255,0.4);
+}
+#back{
+    display:block;
+    padding:11px 22px;
+    font-size:14px;
+    color:var(--green);
+    text-decoration:none;
+    border-bottom:1px solid var(--line);
+    transition:background 0.2s;
+}
+#back:hover{background:rgba(126,231,135,0.1);}
+#back:active{background:rgba(126,231,135,0.18);}
+
+/* ================= 正文排版 ================= */
+#content{
+    padding:34px 46px 70px;
+    line-height:2.05;
+    position:relative;
+}
+/* h1 像一条头注释 */
+#content h1{
+    color:#fff;
+    font-size:2.2em;
+    margin:0 0 0.8em;
+    line-height:1.3;
+    font-weight:700;
+}
+#content h1::before{content:'// ';color:var(--green);}
+#content h1::after{
+    content:'';
+    display:block;
+    height:2px;
+    margin-top:16px;
+    background:linear-gradient(90deg,var(--green),transparent);
+}
+#content h2{
+    color:var(--orange);
+    font-size:1.7em;
+    margin:2em 0 0.8em;
+    border-left:4px solid var(--orange);
+    padding-left:14px;
+}
+/* ===== 标题层级（由大到小）：h1 > h3章 > h4题 > h5 > h6注 ===== */
+/* 章节：经典贪心思维 / 反悔思维 / 证明思维 / 取代贪心 */
+#content h3{
+    color:#5ad1ff;
+    font-size:1.55em;
+    font-weight:700;
+    margin:2.2em 0 1em;
+    padding:10px 16px;
+    background:linear-gradient(90deg,rgba(90,209,255,0.14),rgba(90,209,255,0));
+    border-bottom:2px solid rgba(90,209,255,0.55);
+}
+/* 题目：问题1 / 问题2…（章节下的主干条目，最显眼） */
+#content h4{
+    color:#ffb27d;
+    font-size:1.42em;
+    font-weight:700;
+    margin:1.8em 0 0.9em;
+    padding:10px 16px;
+    background:rgba(255,178,125,0.10);
+    border-left:6px solid var(--orange);
+    border-radius:0 10px 10px 0;
+}
+#content h4::before{content:'▣ ';color:var(--orange);}
+#content h5{
+    color:var(--pink);
+    font-size:1.1em;
+    margin:1.6em 0 0.6em;
+}
+/* 状态约束 / 结果要求 / 分析 等细节标签：刻意弱化，安静地挂在题目下方 */
+#content h6{
+    display:inline-block;
+    color:#9fb0be;
+    font-size:0.98em;
+    font-weight:600;
+    background:rgba(255,255,255,0.05);
+    border-left:3px solid #5b6b7a;
+    padding:6px 14px;
+    border-radius:0 6px 6px 0;
+    margin:1.2em 0 0.4em;
+}
+#content p{
+    margin-bottom:1.2em;
+    color:var(--text);
+    font-size:17px;
+    text-align:justify;
+}
+#content strong{
+    color:var(--orange);
+    font-weight:700;
+    text-shadow:0 0 8px rgba(255,171,112,0.25);
+}
+#content em{
+    color:var(--green);
+    font-style:normal;
+    border-bottom:1px dashed rgba(126,231,135,0.5);
+    padding:0 3px;
+}
+#content del{color:#555e6b;}
+#content a{
+    color:var(--blue);
+    text-decoration:none;
+    border-bottom:1px dashed rgba(88,166,255,0.6);
+    transition:all 0.2s;
+}
+#content a:hover{
+    color:#fff;
+    text-shadow:0 0 10px var(--blue);
+    border-bottom:1px solid var(--blue);
+}
+/* 行内代码：等宽 + 绿色 */
+#content code{
+    background:var(--ed-2);
+    color:var(--green);
+    font-family:Consolas,"JetBrains Mono",monospace;
+    font-size:0.89em;
+    padding:2px 7px;
+    border:1px solid var(--line);
+    border-radius:4px;
+}
+#content pre code{
+    border:none;
+    background:transparent;
+    padding:0;
+    color:var(--text);
+    font-size:14.5px;
+}
+/* 代码块：编辑器内嵌面板 */
+#content pre{
+    background:var(--ed-3);
+    border:1px solid var(--line);
+    border-left:3px solid var(--green);
+    border-radius:8px;
+    padding:18px 20px;
+    overflow-x:auto;
+    margin:1.4em 0;
+    box-shadow:inset 0 0 30px rgba(0,0,0,0.5);
+    position:relative;
+}
+#content pre::after{
+    content:'<< cpp >>';
+    position:absolute;
+    top:10px;
+    right:14px;
+    font-size:10px;
+    color:var(--muted);
+    opacity:0.8;
+    letter-spacing:1px;
+}
+/* 引用：注释块 */
+#content blockquote{
+    background:var(--ed-2);
+    border-left:4px solid var(--green);
+    border-radius:0 8px 8px 0;
+    margin:1.3em 0;
+    padding:12px 18px;
+    color:#a5e3b8;
+}
+#content blockquote::before{
+    content:'> ';
+    color:var(--green);
+    font-weight:700;
+}
+#content blockquote p{color:inherit;margin:0;font-size:15px;}
+/* 列表像待办清单 */
+#content ul,#content ol{
+    padding-left:26px;
+    margin:1em 0 1.2em;
+    color:var(--text);
+}
+#content li{margin-bottom:0.55em;}
+#content ul li::marker{content:'› ';color:var(--green);font-weight:700;}
+#content ol li::marker{color:var(--blue);font-weight:700;}
+#content hr{
+    border:none;
+    border-top:1px dashed var(--line);
+    margin:2em 0;
+}
+/* 表格 */
+#content table{
+    border-collapse:collapse;
+    margin:1.4em 0;
+    width:100%;
+    font-size:14px;
+}
+#content th,#content td{
+    border:1px solid var(--line);
+    padding:8px 14px;
+    text-align:left;
+}
+#content th{background:var(--ed-2);color:var(--green);}
+#content tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+
+/* KaTeX 公式配色微调 */
+#content .katex{color:var(--text);}
+
+@media (max-width:640px){
+    #content{padding:20px 22px 44px;}
+    .file-name{display:none;}
+}
+@media (prefers-reduced-motion:reduce){
+    .cyliner{animation:none;}
+}

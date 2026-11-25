@@ -287,9 +287,11 @@ body{
 .blogpost a{display:block;padding:14px 18px;color:#fff;text-decoration:none;font-weight:500;font-size:18px;}
 .links-section h3{color:#ffcc00;}
 .link-list{list-style:none;padding:0;margin:15px 0 0 0;}
-.link-list li{margin-bottom:10px;}
-.link-list a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:18px;transition:all 0.3s ease;display:inline-block;}
-.link-list a:hover{color:#ffcc00;transform:translateY(-3px);text-shadow:0 0 10px rgba(255,204,0,0.5);}
+.link-list li{position:relative;margin-bottom:10px;}
+.link-list a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:18px;transition:all 0.3s ease;display:inline-block;position:relative;}
+.link-list a:hover{color:#ffcc00;transform:translateY(-3px);z-index:3;text-shadow:0 0 10px rgba(255,204,0,0.5);}
+.link-list a.is-placeholder{color:rgba(255,255,255,0.35);cursor:default;}
+.link-list a.is-placeholder:hover{color:rgba(255,255,255,0.35);transform:none;text-shadow:none;}
 
 /* ===== 博客 iframe 全屏覆盖层 ===== */
 .blog-frame-overlay{
