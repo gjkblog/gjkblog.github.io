@@ -12,5 +12,15 @@ window.POSTS_DATA = [
                 href: "./blog/deeplearning2/viewer.html?file=deeplearning2.md"
             }
         ]
+    },
+    {
+        name: "算法学习",
+        desc: "ACM算法教学及提升",
+        posts: [
+            {
+                title: "贪心算法 从认识到提升",
+                href: "./blog/acm1/viewer.html?file=acm1.md"
+            }
+        ]
     }
 ];

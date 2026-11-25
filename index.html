@@ -271,12 +271,26 @@
 
                 function renderSite(){
                     var wrap = document.getElementById('linkList');
+                    if(!wrap) return;
+                    var data = window.SITE_DATA;
+                    if(!data || !data.length){
+                        data = [{ name:'（暂无友链）', href:'#' }];
+                    }
                     wrap.innerHTML = '';
-                    (window.SITE_DATA || []).forEach(function(item){
+                    data.forEach(function(item){
                         var li = document.createElement('li');
                         var a = document.createElement('a');
                         a.href = item.href;
                         a.textContent = item.name;
+                        if(item.href && item.href !== '#'){
+                            /* 外链一律新标签打开，避免把整个站点导航走 */
+                            a.target = '_blank';
+                            a.rel = 'noopener';
+                        }else{
+                            /* 占位项：不可点 */
+                            a.classList.add('is-placeholder');
+                            a.addEventListener('click', function(e){ e.preventDefault(); });
+                        }
                         li.appendChild(a);
                         wrap.appendChild(li);
                     });
@@ -696,11 +710,16 @@
 
                 /* ===== 初始化 ===== */
                 var sizeSlider=document.getElementById('panelSizeSlider');
-                sizeSlider.addEventListener('input', function(){
-                    panelScale=parseFloat(this.value);
-                    if(effectsOn){layoutPrism();}
-                    applyRender();
-                });
+                if(sizeSlider){
+                    sizeSlider.addEventListener('input', function(){
+                        panelScale=parseFloat(this.value);
+                        if(effectsOn){layoutPrism();}
+                        applyRender();
+                    });
+                }else{
+                    /* 滑块不存在时也不能中断后面的全部渲染 */
+                    console.warn('[init] #panelSizeSlider 不存在，已跳过尺寸绑定');
+                }
                 layoutPrism();
                 window.addEventListener('resize', function(){
                     if(effectsOn){layoutPrism();}else{layoutFlat();}
@@ -754,6 +773,8 @@
                 window.addEventListener('load', function(){
                     requestAnimationFrame(forceRender);
                     setTimeout(forceRender, 100);
+                    /* 页面完全就绪后再兜底渲染一次友情链接 */
+                    try{ renderSite(); }catch(e){}
                 });
 
                 /* ===== 博客 iframe 全屏覆盖层 ===== */
